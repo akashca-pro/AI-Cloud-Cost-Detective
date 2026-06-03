@@ -1,17 +1,19 @@
 ## AI Cloud Cost Detective - Request Flow
 
 ```
-①  User ─·─·─► React ─·─·─► FastAPI Auth ─·─·─► JWT (Amazon RDS PostgreSQL)
+①  User ──► React ──► FastAPI Auth ──► JWT (Amazon RDS PostgreSQL)     [planned]
 
-②  User selects Resource Group ─·─·─► Python Backend
+②  User selects regions, services, and tag filters ──► Python Backend
 
-③  Python ─·─·─► AWS CLI ─·─·─► Fetches all resources in RG
+③  Python ──► boto3 ──► Discovers EC2, RDS, S3, ELB, EBS resources   [✅ done]
 
-④  Python ─·─·─► FastAPI WebSocket ─·─·─► React (live progress)
+④  Python ──► FinOpsDetector ──► Rule-based findings                  [✅ done]
 
-⑤  Python ─·─·─► OpenAI API ─·─·─► Cost analysis
+⑤  Python ──► OpenAI API ──► Summary, savings, AWS CLI fix commands   [planned]
 
-⑥  Python ─·─·─► Amazon RDS PostgreSQL ─·─·─► Stores analysis history
+⑥  Python ──► FastAPI WebSocket ──► React (live progress)             [planned]
 
-⑦  React ◄·─·─·─ Final report with suggestions & fixes
+⑦  Python ──► Amazon RDS PostgreSQL ──► Stores analysis history       [planned]
+
+⑧  React ◄── Final report with findings, AI summary, and fixes        [planned]
 ```
