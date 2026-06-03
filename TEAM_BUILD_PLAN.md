@@ -81,7 +81,7 @@ WP1 → WP2 → WP3 → WP4 → WP5 → WP6 → WP7 → develop → main
 
 | WP | Name | Status | Lead | Reviewer | Branch | PR | Started | Merged | Review | Notes |
 |----|------|--------|------|----------|--------|-----|---------|--------|--------|-------|
-| WP1 | AWS discovery + rules | `In Progress` | akash-ca | devanarayan | `feature/wp1-resource-discovery` | — | 2026-06-03 | — | — | Backend built locally; PR to `develop` pending |
+| WP1 | AWS discovery + rules | `In Review` | akash-ca | devanarayan | `feature/wp1-resource-discovery` | [#3](https://github.com/akashca-pro/AI-Cloud-Cost-Detective/pull/3) | 2026-06-03 | — | — | Backend-only PR; awaiting devanarayan review |
 | WP2 | OpenAI enrichment | `Not Started` | devanarayan | akash-ca | `feature/wp2-ai-enrichment` | — | — | — | — | Blocked until WP1 merged |
 | WP3 | Database + history | `Not Started` | akash-ca | devanarayan | `feature/wp3-database-history` | — | — | — | — | Blocked until WP2 merged |
 | WP4 | Auth full stack | `Not Started` | devanarayan (FE) / akash-ca (BE) | each other | `feature/wp4-auth-fullstack` | — | — | — | — | Blocked until WP3 merged |
@@ -378,3 +378,4 @@ Branch from develop. Update TEAM_BUILD_PLAN.md progress tracker when done.
 |------|--------|--------|
 | 2026-06-03 | akash-ca | Created TEAM_BUILD_PLAN.md; WP1 in progress |
 | 2026-06-03 | akash-ca | Removed Cursor branding from team build plan |
+| 2026-06-03 | akash-ca | WP1 → In Review; PR #3 opened |
