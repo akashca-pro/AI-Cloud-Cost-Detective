@@ -81,8 +81,8 @@ WP1 → WP2 → WP3 → WP4 → WP5 → WP6 → WP7 → develop → main
 
 | WP | Name | Status | Lead | Reviewer | Branch | PR | Started | Merged | Review | Notes |
 |----|------|--------|------|----------|--------|-----|---------|--------|--------|-------|
-| WP1 | AWS discovery + rules | `In Review` | akash-ca | devanarayan | `feature/wp1-resource-discovery` | [#3](https://github.com/akashca-pro/AI-Cloud-Cost-Detective/pull/3) | 2026-06-03 | — | — | Backend-only PR; awaiting devanarayan review |
-| WP2 | OpenAI enrichment | `Not Started` | devanarayan | akash-ca | `feature/wp2-ai-enrichment` | — | — | — | — | Blocked until WP1 merged |
+| WP1 | AWS discovery + rules | `Merged` | akash-ca | devanarayan | `feature/wp1-resource-discovery` | [#3](https://github.com/akashca-pro/AI-Cloud-Cost-Detective/pull/3) | 2026-06-03 | 2026-06-03 | Approved | boto3 discovery + FinOps rules merged to develop |
+| WP2 | OpenAI enrichment | `Not Started` | devanarayan | akash-ca | `feature/wp2-ai-enrichment` | — | — | — | — | Ready — devanarayan starts from latest develop |
 | WP3 | Database + history | `Not Started` | akash-ca | devanarayan | `feature/wp3-database-history` | — | — | — | — | Blocked until WP2 merged |
 | WP4 | Auth full stack | `Not Started` | devanarayan (FE) / akash-ca (BE) | each other | `feature/wp4-auth-fullstack` | — | — | — | — | Blocked until WP3 merged |
 | WP5 | Frontend pages | `Not Started` | devanarayan (History/Nav) / akash-ca (Dashboard/Report) | each other | `feature/wp5-frontend-pages` | — | — | — | — | Blocked until WP4 merged |
@@ -110,12 +110,12 @@ WP1 → WP2 → WP3 → WP4 → WP5 → WP6 → WP7 → develop → main
 FastAPI backend discovers AWS resources via **boto3** and runs **deterministic FinOps rules**.
 
 ### Deliverables
-- [ ] `backend/main.py` — `GET /api/health`, `GET /api/aws/regions`, `POST /api/analyze`
-- [ ] `backend/scanners/` — EC2, RDS, S3, ELB, EBS
-- [ ] `backend/detection/finops_detectors.py` — rule-based findings
-- [ ] `backend/services/aws_discovery_service.py` — orchestration
-- [ ] `backend/requirements.txt` — fastapi, uvicorn, boto3, pydantic
-- [ ] PR merged to `develop`
+- [x] `backend/main.py` — `GET /api/health`, `GET /api/aws/regions`, `POST /api/analyze`
+- [x] `backend/scanners/` — EC2, RDS, S3, ELB, EBS
+- [x] `backend/detection/finops_detectors.py` — rule-based findings
+- [x] `backend/services/aws_discovery_service.py` — orchestration
+- [x] `backend/requirements.txt` — fastapi, uvicorn, boto3, pydantic
+- [x] PR merged to `develop`
 
 ### akash-ca — steps
 1. `git checkout develop && git pull`
@@ -379,3 +379,4 @@ Branch from develop. Update TEAM_BUILD_PLAN.md progress tracker when done.
 | 2026-06-03 | akash-ca | Created TEAM_BUILD_PLAN.md; WP1 in progress |
 | 2026-06-03 | akash-ca | Removed Cursor branding from team build plan |
 | 2026-06-03 | akash-ca | WP1 → In Review; PR #3 opened |
+| 2026-06-03 | akash-ca | WP1 merged to develop (PR #3 approved) |
