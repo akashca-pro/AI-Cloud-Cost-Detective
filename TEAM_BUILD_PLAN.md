@@ -49,6 +49,7 @@ docs: update TEAM_BUILD_PLAN — WP2 merged (devanarayan)
 - Every PR needs **one approval** from the other person
 - Never commit `.env` — only update `.env.example`
 - After a WP merges, both run: `git checkout develop && git pull origin develop`
+- Do not add vendor attribution footers (e.g. `Co-authored-by`, "Made with …") to commits or PR descriptions
 
 ---
 
@@ -359,9 +360,9 @@ Full app flow works end to end.
 
 ---
 
-## Cursor prompts
+## Development prompts
 
-When starting a WP in Cursor, say:
+When starting a WP in your editor, say:
 
 ```text
 Implement WP# for AI Cloud Cost Detective. I am [akash-ca | devanarayan].
@@ -376,3 +377,4 @@ Branch from develop. Update TEAM_BUILD_PLAN.md progress tracker when done.
 | Date | Person | Update |
 |------|--------|--------|
 | 2026-06-03 | akash-ca | Created TEAM_BUILD_PLAN.md; WP1 in progress |
+| 2026-06-03 | akash-ca | Removed Cursor branding from team build plan |
