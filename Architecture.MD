@@ -7,44 +7,43 @@
                                      │
                                      ▼
                            ┌───────────────────┐
-                           │  REACT FRONTEND   │
+                           │  REACT FRONTEND   │  (planned)
                            └────────┬──────────┘
-                                    :
-                                    : Login / Signup
+                                    │
                                     ▼
                            ┌───────────────────┐
                            │  PYTHON BACKEND   │
                            │    (FastAPI)      │
                            │                   │
-                           │  · Custom JWT Auth│
+                           │  · JWT Auth       │  (planned)
+                           │  · Discovery      │  ✅
+                           │  · Rule detection │  ✅
                            └───┬───────┬───┬───┘
-                               :       :   :
-                ┌──────────────┘       :   └──────────────┐
-                :                      :                  :
+                               │       │   │
+                ┌──────────────┘       │   └──────────────┐
                 ▼                      ▼                  ▼
          ┌─────────────┐     ┌──────────────┐    ┌──────────────┐
-         │  AWS CLI    │     │   FASTAPI    │    │   OPENAI     │
-         │             │     │  WEBSOCKET   │    │    API       │
-         │ aws resource│     │  (Progress)  │    │              │
-         │ -groups list│     └──────┬───────┘    │ Cost Analysis│
-         └──────┬──────┘            :            └──────┬───────┘
-                :                   : Live updates      :
-                ▼                   ▼                   :
-         ┌─────────────┐   ┌───────────────┐            :
-         │    AWS      │   │    REACT      │            :
-         │ (Resource   │   │  (Progress    │            :
-         │   Group)    │   │   Tracker)    │            :
-         └─────────────┘   └───────────────┘            :
-                                                        ▼
+         │   BOTO3     │     │   FASTAPI    │    │   OPENAI     │
+         │  AWS APIs   │     │  WEBSOCKET   │    │    API       │
+         │             │     │  (planned)   │    │  (planned)   │
+         │ EC2/RDS/S3  │     └──────┬───────┘    │ Enrich       │
+         │ ELB/EBS/CW  │            │            │ findings     │
+         └──────┬──────┘            │            └──────┬───────┘
+                │                   │                     │
+                ▼                   ▼                     │
+         ┌─────────────┐   ┌───────────────┐            │
+         │    AWS      │   │    REACT      │            │
+         │  Account    │   │  Progress UI  │            │
+         │  (regions,  │   │  (planned)    │            │
+         │   tags)     │   └───────────────┘            │
+         └─────────────┘                                  ▼
                                                  ┌──────────────┐
                                                  │   AMAZON     │
-                                                 │ RDS POSTGRES │
-                                                 │              │
+                                                 │ RDS POSTGRES │  (planned)
                                                  │ · users      │
                                                  │ · analyses   │
                                                  └──────┬───────┘
-                                                        :
-                                                        : Stored results
+                                                        │
                                                         ▼
                                                  ┌───────────────┐
                                                  │    REACT      │
