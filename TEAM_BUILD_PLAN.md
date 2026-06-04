@@ -82,8 +82,8 @@ WP1 → WP2 → WP3 → WP4 → WP5 → WP6 → WP7 → develop → main
 | WP | Name | Status | Lead | Reviewer | Branch | PR | Started | Merged | Review | Notes |
 |----|------|--------|------|----------|--------|-----|---------|--------|--------|-------|
 | WP1 | AWS discovery + rules | `Merged` | akash-ca | devanarayan | `feature/wp1-resource-discovery` | [#3](https://github.com/akashca-pro/AI-Cloud-Cost-Detective/pull/3) | 2026-06-03 | 2026-06-03 | Approved | boto3 discovery + FinOps rules merged to develop |
-| WP2 | OpenAI enrichment | `Not Started` | devanarayan | akash-ca | `feature/wp2-ai-enrichment` | — | — | — | — | Ready — devanarayan starts from latest develop |
-| WP3 | Database + history | `Not Started` | akash-ca | devanarayan | `feature/wp3-database-history` | — | — | — | — | Blocked until WP2 merged |
+| WP2 | OpenAI enrichment | `Merged` | devanarayan | akash-ca | `feature/wp2-ai-enrichment` | [#5](https://github.com/akashca-pro/AI-Cloud-Cost-Detective/pull/5) | 2026-06-04 | 2026-06-04 | Approved | ai_analyzer.py + ai_enrichment merged to develop |
+| WP3 | Database + history | `Not Started` | akash-ca | devanarayan | `feature/wp3-database-history` | — | — | — | — | Ready — akash-ca starts from latest develop |
 | WP4 | Auth full stack | `Not Started` | devanarayan (FE) / akash-ca (BE) | each other | `feature/wp4-auth-fullstack` | — | — | — | — | Blocked until WP3 merged |
 | WP5 | Frontend pages | `Not Started` | devanarayan (History/Nav) / akash-ca (Dashboard/Report) | each other | `feature/wp5-frontend-pages` | — | — | — | — | Blocked until WP4 merged |
 | WP6 | WebSocket progress | `Not Started` | devanarayan (BE WS) / akash-ca (ProgressTracker) | each other | `feature/wp6-websocket-progress` | — | — | — | — | Blocked until WP5 merged |
@@ -377,6 +377,7 @@ Branch from develop. Update TEAM_BUILD_PLAN.md progress tracker when done.
 | Date | Person | Update |
 |------|--------|--------|
 | 2026-06-03 | akash-ca | Created TEAM_BUILD_PLAN.md; WP1 in progress |
+| 2026-06-04 | devanarayan | WP2 merged to develop via PR #5 |
 | 2026-06-03 | akash-ca | Removed Cursor branding from team build plan |
 | 2026-06-03 | akash-ca | WP1 → In Review; PR #3 opened |
 | 2026-06-03 | akash-ca | WP1 merged to develop (PR #3 approved) |
