@@ -14,6 +14,24 @@ class WorkloadSummary(BaseModel):
     resource_ids: list[str] = Field(default_factory=list)
 
 
+class EnrichedFinding(BaseModel):
+    """AI layer on top of a deterministic finding."""
+
+    finding_id: str
+    ai_explanation: str | None = None
+    fix_command: str | None = None
+
+
+class AIEnrichment(BaseModel):
+    """OpenAI-generated summary and remediation hints (WP2)."""
+
+    summary: str = ""
+    estimated_savings: str = ""
+    enriched_findings: list[EnrichedFinding] = Field(default_factory=list)
+    skipped: bool = False
+    skip_reason: str | None = None
+
+
 class AnalyzeResponse(BaseModel):
     cloud_provider: str = "aws"
     account_id: str | None = None
@@ -25,3 +43,4 @@ class AnalyzeResponse(BaseModel):
     workloads: list[WorkloadSummary] = Field(default_factory=list)
     findings: list[Finding] = Field(default_factory=list)
     findings_summary: dict[str, int] = Field(default_factory=dict)
+    ai_enrichment: AIEnrichment | None = None
