@@ -10,6 +10,7 @@ from botocore.exceptions import ClientError, NoCredentialsError, PartialCredenti
 
 from core.exceptions import AWSCredentialsError, AWSRegionError, AWSDiscoveryError
 from core.session import create_session
+from ai_analyzer import AIAnalyzer
 from detection.finops_detectors import FinOpsDetector
 from models.requests import AnalyzeRequest
 from models.resources import NormalizedResource
@@ -75,7 +76,7 @@ class AWSDiscoveryService:
         workloads = self._aggregate_workloads(resources, tag_filter)
         findings = self.detector.detect(resources)
 
-        return AnalyzeResponse(
+        response = AnalyzeResponse(
             cloud_provider="aws",
             account_id=self.get_account_id(),
             regions_scanned=regions,
@@ -87,6 +88,10 @@ class AWSDiscoveryService:
             findings=findings,
             findings_summary=self.detector.summarize(findings),
         )
+
+        ai_enrichment = await asyncio.to_thread(AIAnalyzer().enrich, response)
+        response.ai_enrichment = ai_enrichment
+        return response
 
     async def _scan_all(
         self,

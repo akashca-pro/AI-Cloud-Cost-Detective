@@ -1,5 +1,9 @@
 """AI Cloud Cost Detective — AWS-native FinOps discovery API."""
 
+from dotenv import load_dotenv
+
+load_dotenv()
+
 from fastapi import FastAPI, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
 
@@ -16,7 +20,7 @@ from services.aws_discovery_service import AWSDiscoveryService
 app = FastAPI(
     title="AI Cloud Cost Detective",
     description="AWS-native infrastructure discovery and deterministic FinOps detection",
-    version="0.2.0",
+    version="0.3.0",
 )
 
 app.add_middleware(
@@ -68,7 +72,8 @@ async def list_enabled_regions() -> dict:
 @app.post("/api/analyze", response_model=AnalyzeResponse)
 async def analyze(request: AnalyzeRequest) -> AnalyzeResponse:
     """
-    Discover AWS resources by region, service, and tags; run deterministic FinOps checks.
+    Discover AWS resources by region, service, and tags; run deterministic FinOps checks;
+    enrich results with OpenAI summary and AWS CLI remediation hints.
 
     Example workload filter:
     ``{"tags": {"Environment": "prod", "Project": "payments"}}``
