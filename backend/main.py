@@ -21,6 +21,9 @@ from core.exceptions import (
     AWSRegionError,
 )
 from db import DatabaseError
+import auth_service
+from auth_service import AuthConfigError, AuthError
+from models.auth import AuthRequest, AuthResponse
 from models.history import AnalysisHistoryDetail, AnalysisHistoryItem, HistoryDetailResponse, HistoryListResponse
 from models.requests import AnalyzeRequest
 from models.responses import AnalyzeResponse
@@ -39,7 +42,7 @@ async def lifespan(_app: FastAPI):
 app = FastAPI(
     title="AI Cloud Cost Detective",
     description="AWS-native infrastructure discovery, FinOps detection, and analysis history",
-    version="0.4.0",
+    version="0.5.0",
     lifespan=lifespan,
 )
 
@@ -82,6 +85,49 @@ def _require_db() -> None:
             "DATABASE_URL is not configured. Set it in .env to use analysis history.",
             "database_not_configured",
         )
+
+
+def _auth_http_error(exc: AuthError) -> HTTPException:
+    return HTTPException(
+        status_code=exc.status_code,
+        detail={"detail": exc.message, "code": exc.code},
+    )
+
+
+@app.post("/api/auth/signup", response_model=AuthResponse)
+async def auth_signup(body: AuthRequest) -> AuthResponse:
+    """Register a user (bcrypt password hash) and return a JWT."""
+    try:
+        token = await asyncio.to_thread(auth_service.signup, body.email, body.password)
+    except AuthConfigError as exc:
+        raise HTTPException(
+            status_code=503,
+            detail={"detail": exc.message, "code": exc.code},
+        ) from exc
+    except DatabaseError as exc:
+        raise _db_http_error(exc) from exc
+    except AuthError as exc:
+        raise _auth_http_error(exc) from exc
+
+    return AuthResponse(token=token)
+
+
+@app.post("/api/auth/login", response_model=AuthResponse)
+async def auth_login(body: AuthRequest) -> AuthResponse:
+    """Validate credentials and return a JWT."""
+    try:
+        token = await asyncio.to_thread(auth_service.login, body.email, body.password)
+    except AuthConfigError as exc:
+        raise HTTPException(
+            status_code=503,
+            detail={"detail": exc.message, "code": exc.code},
+        ) from exc
+    except DatabaseError as exc:
+        raise _db_http_error(exc) from exc
+    except AuthError as exc:
+        raise _auth_http_error(exc) from exc
+
+    return AuthResponse(token=token)
 
 
 @app.get("/api/health")
