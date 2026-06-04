@@ -34,6 +34,10 @@ class AIEnrichment(BaseModel):
 
 class AnalyzeResponse(BaseModel):
     cloud_provider: str = "aws"
+    analysis_id: str | None = Field(
+        default=None,
+        description="Persisted analysis UUID when DATABASE_URL is configured (WP3).",
+    )
     account_id: str | None = None
     regions_scanned: list[str] = Field(default_factory=list)
     services_scanned: list[str] = Field(default_factory=list)
