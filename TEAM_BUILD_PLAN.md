@@ -84,7 +84,7 @@ WP1 → WP2 → WP3 → WP4 → WP5 → WP6 → WP7 → develop → main
 | WP1 | AWS discovery + rules | `Merged` | akash-ca | devanarayan | `feature/wp1-resource-discovery` | [#3](https://github.com/akashca-pro/AI-Cloud-Cost-Detective/pull/3) | 2026-06-03 | 2026-06-03 | Approved | boto3 discovery + FinOps rules merged to develop |
 | WP2 | OpenAI enrichment | `Merged` | devanarayan | akash-ca | `feature/wp2-ai-enrichment` | [#5](https://github.com/akashca-pro/AI-Cloud-Cost-Detective/pull/5) | 2026-06-04 | 2026-06-04 | Approved | OpenAI enrichment merged to develop; tested by akash-ca |
 | WP3 | Database + history | `Merged` | akash-ca | devanarayan | `feature/wp3-database-history` | [#6](https://github.com/akashca-pro/AI-Cloud-Cost-Detective/pull/6) | 2026-06-04 | 2026-06-04 | Approved | PostgreSQL + history API merged to develop |
-| WP4 | Auth full stack | `In Progress` | devanarayan (FE) / akash-ca (BE) | each other | `feature/wp4-auth-fullstack` | — | 2026-06-04 | — | — | FE: Login/Signup + JWT client committed; BE auth pending (akash-ca) |
+| WP4 | Auth full stack | `In Review` | devanarayan (FE) / akash-ca (BE) | each other | `feature/wp4-auth-fullstack` | — | 2026-06-04 | — | — | FE+BE on branch; JWT signup/login E2E tested by akash-ca; open PR → develop |
 | WP5 | Frontend pages | `Not Started` | devanarayan (History/Nav) / akash-ca (Dashboard/Report) | each other | `feature/wp5-frontend-pages` | — | — | — | — | Blocked until WP4 merged |
 | WP6 | WebSocket progress | `Not Started` | devanarayan (BE WS) / akash-ca (ProgressTracker) | each other | `feature/wp6-websocket-progress` | — | — | — | — | Blocked until WP5 merged |
 | WP7 | E2E integration | `Not Started` | Both | each other | `feature/wp7-integration-e2e` | — | — | — | — | Blocked until WP6 merged |
@@ -227,16 +227,16 @@ Signup/login with JWT; credentials in RDS `users` table.
 ### Deliverables
 
 **akash-ca (backend)**
-- [ ] `POST /api/auth/signup` — bcrypt hash → JWT
-- [ ] `POST /api/auth/login` — validate → JWT
-- [ ] `JWT_SECRET` in `.env.example`
-- [ ] `PyJWT`, `bcrypt` in `requirements.txt`
+- [x] `POST /api/auth/signup` — bcrypt hash → JWT
+- [x] `POST /api/auth/login` — validate → JWT
+- [x] `JWT_SECRET` in `.env.example`
+- [x] `PyJWT`, `bcrypt` in `requirements.txt`
 
 **devanarayan (frontend)**
-- [ ] Scaffold `frontend/` — Vite + React + TypeScript + Tailwind (dark theme)
-- [ ] `Login.tsx`, `Signup.tsx`
-- [ ] JWT in `localStorage`; `Authorization: Bearer` on API calls
-- [ ] Redirect to login if unauthenticated
+- [x] Scaffold `frontend/` — Vite + React + TypeScript + Tailwind (dark theme)
+- [x] `Login.tsx`, `Signup.tsx`
+- [x] JWT in `localStorage`; `Authorization: Bearer` on API calls
+- [x] Redirect to login if unauthenticated
 
 ### Steps (both)
 1. Agree on API contract before coding:
@@ -385,3 +385,4 @@ Branch from develop for code. Update TEAM_BUILD_PLAN.md progress tracker on the 
 | 2026-06-04 | akash-ca | WP3 → In Review; PR #6 opened (PostgreSQL + history API) |
 | 2026-06-04 | akash-ca | WP3 merged to develop via PR #6 (approved by devanarayan) |
 | 2026-06-04 | devanarayan | WP4 in progress — React auth frontend on feature/wp4-auth-fullstack |
+| 2026-06-04 | akash-ca | WP4 → In Review — backend JWT auth pushed; FE+BE E2E tested on feature/wp4-auth-fullstack |
