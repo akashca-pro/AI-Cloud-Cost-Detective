@@ -1,7 +1,8 @@
 import { FormEvent, useEffect, useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { api, type ApiError } from "../lib/api";
-import { ALL_SERVICES, type ServiceName } from "../types/analysis";
+import { formatAnalysisTimestamp } from "../lib/format";
+import { ALL_SERVICES, type AnalysisHistoryItem, type ServiceName } from "../types/analysis";
 
 const SERVICE_LABELS: Record<ServiceName, string> = {
   ec2: "EC2",
@@ -27,6 +28,40 @@ export default function Dashboard() {
 
   const [running, setRunning] = useState(false);
   const [runError, setRunError] = useState<string | null>(null);
+
+  const [recentAnalyses, setRecentAnalyses] = useState<AnalysisHistoryItem[]>([]);
+  const [loadingHistory, setLoadingHistory] = useState(true);
+  const [historyError, setHistoryError] = useState<string | null>(null);
+
+  useEffect(() => {
+    let cancelled = false;
+    async function loadHistory() {
+      setLoadingHistory(true);
+      setHistoryError(null);
+      try {
+        const data = await api.getHistory(10);
+        if (!cancelled) {
+          setRecentAnalyses(data.analyses);
+        }
+      } catch (err) {
+        if (!cancelled) {
+          const message =
+            typeof err === "object" && err && "message" in err
+              ? String((err as ApiError).message)
+              : "Could not load past analyses.";
+          setHistoryError(message);
+        }
+      } finally {
+        if (!cancelled) {
+          setLoadingHistory(false);
+        }
+      }
+    }
+    void loadHistory();
+    return () => {
+      cancelled = true;
+    };
+  }, []);
 
   useEffect(() => {
     let cancelled = false;
@@ -106,7 +141,12 @@ export default function Dashboard() {
         services: selectedServices,
         tags,
       });
-      navigate("/report", { state: { result } });
+      navigate("/report", {
+        state: {
+          result,
+          analyzedAt: new Date().toISOString(),
+        },
+      });
     } catch (err) {
       const message =
         typeof err === "object" && err && "message" in err
@@ -256,6 +296,48 @@ export default function Dashboard() {
       >
         {running ? "Running analysis…" : "Run analysis"}
       </button>
+
+      <section className="mt-12 rounded-2xl border border-slate-800 bg-slate-900/50 p-6">
+        <h2 className="mb-1 text-lg font-medium text-slate-200">Past analyses</h2>
+        <p className="mb-4 text-sm text-slate-500">Stored in the database — open a report to view findings.</p>
+
+        {loadingHistory ? (
+          <p className="text-sm text-slate-500">Loading history…</p>
+        ) : historyError ? (
+          <p className="rounded-lg border border-amber-900/50 bg-amber-950/30 px-3 py-2 text-sm text-amber-200">
+            {historyError}
+          </p>
+        ) : recentAnalyses.length === 0 ? (
+          <p className="text-sm text-slate-600">No saved analyses yet. Run your first scan above.</p>
+        ) : (
+          <ul className="divide-y divide-slate-800">
+            {recentAnalyses.map((item) => (
+              <li key={item.id}>
+                <Link
+                  to={`/report/${item.id}`}
+                  className="flex flex-wrap items-center justify-between gap-3 py-4 transition hover:bg-slate-800/30 -mx-2 px-2 rounded-lg"
+                >
+                  <div>
+                    <p className="font-medium text-slate-200">
+                      {item.workload_label || item.regions_scanned.join(", ") || "AWS scan"}
+                    </p>
+                    <p className="mt-1 text-xs text-slate-500">
+                      {item.services_scanned.join(", ") || "—"}
+                      {item.regions_scanned.length > 0 && ` · ${item.regions_scanned.join(", ")}`}
+                    </p>
+                  </div>
+                  <div className="text-right text-sm">
+                    <p className="text-slate-300">{formatAnalysisTimestamp(item.created_at)}</p>
+                    <p className="mt-1 text-xs text-slate-500">
+                      {item.resources_scanned} resources · {item.issues_found} findings
+                    </p>
+                  </div>
+                </Link>
+              </li>
+            ))}
+          </ul>
+        )}
+      </section>
     </div>
   );
 }
