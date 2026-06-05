@@ -1,8 +1,9 @@
 import { Navigate, Route, Routes } from "react-router-dom";
-import AppShell from "./components/AppShell";
 import GuestRoute from "./components/GuestRoute";
+import Navbar from "./components/Navbar";
 import ProtectedRoute from "./components/ProtectedRoute";
 import Dashboard from "./pages/Dashboard";
+import History from "./pages/History";
 import Login from "./pages/Login";
 import Report from "./pages/Report";
 import Signup from "./pages/Signup";
@@ -30,9 +31,19 @@ export default function App() {
         path="/"
         element={
           <ProtectedRoute>
-            <AppShell>
+            <Navbar>
               <Dashboard />
-            </AppShell>
+            </Navbar>
+          </ProtectedRoute>
+        }
+      />
+      <Route
+        path="/history"
+        element={
+          <ProtectedRoute>
+            <Navbar>
+              <History />
+            </Navbar>
           </ProtectedRoute>
         }
       />
@@ -40,9 +51,9 @@ export default function App() {
         path="/report"
         element={
           <ProtectedRoute>
-            <AppShell>
+            <Navbar>
               <Report />
-            </AppShell>
+            </Navbar>
           </ProtectedRoute>
         }
       />
@@ -50,9 +61,9 @@ export default function App() {
         path="/report/:analysisId"
         element={
           <ProtectedRoute>
-            <AppShell>
+            <Navbar>
               <Report />
-            </AppShell>
+            </Navbar>
           </ProtectedRoute>
         }
       />
