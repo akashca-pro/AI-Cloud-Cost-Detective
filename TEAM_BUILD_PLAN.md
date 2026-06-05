@@ -85,8 +85,8 @@ WP1 → WP2 → WP3 → WP4 → WP5 → WP6 → WP7 → develop → main
 | WP2 | OpenAI enrichment | `Merged` | devanarayan | akash-ca | `feature/wp2-ai-enrichment` | [#5](https://github.com/akashca-pro/AI-Cloud-Cost-Detective/pull/5) | 2026-06-04 | 2026-06-04 | Approved | OpenAI enrichment merged to develop; tested by akash-ca |
 | WP3 | Database + history | `Merged` | akash-ca | devanarayan | `feature/wp3-database-history` | [#6](https://github.com/akashca-pro/AI-Cloud-Cost-Detective/pull/6) | 2026-06-04 | 2026-06-04 | Approved | PostgreSQL + history API merged to develop |
 | WP4 | Auth full stack | `Merged` | devanarayan (FE) / akash-ca (BE) | each other | `feature/wp4-auth-fullstack` | [#7](https://github.com/akashca-pro/AI-Cloud-Cost-Detective/pull/7) | 2026-06-04 | 2026-06-04 | Approved | JWT auth full stack merged to develop via PR #7 |
-| WP5 | Frontend pages | `In Review` | devanarayan (History/Nav) / akash-ca (Dashboard/Report) | each other | `feature/wp5-frontend-pages` | [#8](https://github.com/akashca-pro/AI-Cloud-Cost-Detective/pull/8) | 2026-06-04 | — | Approved (devanarayan) | Both halves complete on branch; devanarayan pushed History + Navbar + routing; tested locally E2E; awaiting merge to develop |
-| WP6 | WebSocket progress | `Not Started` | devanarayan (BE WS) / akash-ca (ProgressTracker) | each other | `feature/wp6-websocket-progress` | — | — | — | — | Blocked until WP5 merged |
+| WP5 | Frontend pages | `Merged` | devanarayan (History/Nav) / akash-ca (Dashboard/Report) | each other | `feature/wp5-frontend-pages` | [#8](https://github.com/akashca-pro/AI-Cloud-Cost-Detective/pull/8) | 2026-06-04 | 2026-06-04 | Approved | Dashboard, Report, History, Navbar merged to develop via PR #8 |
+| WP6 | WebSocket progress | `Not Started` | devanarayan (BE WS) / akash-ca (ProgressTracker) | each other | `feature/wp6-websocket-progress` | — | — | — | — | Ready — branch from develop |
 | WP7 | E2E integration | `Not Started` | Both | each other | `feature/wp7-integration-e2e` | — | — | — | — | Blocked until WP6 merged |
 
 **Status values:** `Not Started` · `In Progress` · `In Review` · `Changes Requested` · `Merged`
@@ -268,8 +268,8 @@ Core UI pages wired to mock or real API.
 - [x] `Report.tsx` — findings, severity badges, copyable fix commands
 
 **devanarayan**
-- [ ] `History.tsx` — past analyses list
-- [ ] `Navbar.tsx` + routing in `App.tsx`
+- [x] `History.tsx` — past analyses list
+- [x] `Navbar.tsx` + routing in `App.tsx`
 
 ### Steps (both)
 1. Branch from `develop`
@@ -390,3 +390,4 @@ Branch from develop for code. Update TEAM_BUILD_PLAN.md progress tracker on the 
 | 2026-06-04 | akash-ca | WP4 merged to develop via PR #7; WP5 unblocked |
 | 2026-06-04 | akash-ca | WP5 in progress — Dashboard + Report on feature/wp5-frontend-pages |
 | 2026-06-04 | akash-ca | WP5 → In Review — PR #8 opened (Dashboard, Report, history timestamps); tested locally |
+| 2026-06-04 | akash-ca | WP5 merged to develop via PR #8; WP6 unblocked |
