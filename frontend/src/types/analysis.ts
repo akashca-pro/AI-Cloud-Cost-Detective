@@ -57,8 +57,27 @@ export interface RegionsResponse {
 
 export interface HistoryDetailResponse {
   cloud_provider: string;
-  analysis: {
-    id: string;
+  analysis: AnalysisHistoryItem & {
     analysis_result?: AnalyzeResponse | null;
   };
+}
+
+export interface AnalysisHistoryItem {
+  id: string;
+  user_id?: string | null;
+  scan_scope?: Record<string, unknown>;
+  regions_scanned: string[];
+  services_scanned: string[];
+  resources_scanned: number;
+  issues_found: number;
+  estimated_savings?: string | null;
+  status: string;
+  created_at?: string | null;
+  workload_label?: string;
+}
+
+export interface HistoryListResponse {
+  cloud_provider: string;
+  count: number;
+  analyses: AnalysisHistoryItem[];
 }

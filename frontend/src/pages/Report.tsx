@@ -1,10 +1,12 @@
 import { useEffect, useMemo, useState } from "react";
 import { Link, useLocation, useParams } from "react-router-dom";
 import { api, type ApiError } from "../lib/api";
+import { formatAnalysisTimestamp } from "../lib/format";
 import type { AnalyzeResponse, Finding, Severity } from "../types/analysis";
 
 interface ReportLocationState {
   result?: AnalyzeResponse;
+  analyzedAt?: string | null;
 }
 
 function SeverityBadge({ severity }: { severity: Severity }) {
@@ -105,6 +107,10 @@ export default function Report() {
   const state = location.state as ReportLocationState | null;
 
   const [result, setResult] = useState<AnalyzeResponse | null>(state?.result ?? null);
+  const [analyzedAt, setAnalyzedAt] = useState<string | null>(state?.analyzedAt ?? null);
+  const [displayAnalysisId, setDisplayAnalysisId] = useState<string | null>(
+    state?.result?.analysis_id ?? analysisId ?? null,
+  );
   const [loading, setLoading] = useState(Boolean(analysisId && !state?.result));
   const [error, setError] = useState<string | null>(null);
 
@@ -120,6 +126,8 @@ export default function Report() {
         const data = await api.getHistoryDetail(id);
         if (!cancelled) {
           setResult(data.analysis.analysis_result ?? null);
+          setAnalyzedAt(data.analysis.created_at ?? null);
+          setDisplayAnalysisId(data.analysis.id);
         }
       } catch (err) {
         if (!cancelled) {
@@ -184,8 +192,13 @@ export default function Report() {
             ← Dashboard
           </Link>
           <h1 className="mt-2 text-3xl font-semibold text-slate-100">Analysis report</h1>
-          {result.analysis_id && (
-            <p className="mt-1 font-mono text-xs text-slate-500">{result.analysis_id}</p>
+          {displayAnalysisId && (
+            <p className="mt-1 font-mono text-xs text-slate-500">{displayAnalysisId}</p>
+          )}
+          {analyzedAt && (
+            <p className="mt-2 text-sm text-slate-400">
+              Analyzed {formatAnalysisTimestamp(analyzedAt)}
+            </p>
           )}
         </div>
         <div className="rounded-xl border border-slate-800 bg-slate-900/50 px-4 py-3 text-right text-sm">

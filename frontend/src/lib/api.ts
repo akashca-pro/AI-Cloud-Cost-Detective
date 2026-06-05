@@ -3,6 +3,7 @@ import type {
   AnalyzeRequest,
   AnalyzeResponse,
   HistoryDetailResponse,
+  HistoryListResponse,
   RegionsResponse,
 } from "../types/analysis";
 
@@ -80,4 +81,5 @@ export const api = {
     }),
   getHistoryDetail: (analysisId: string) =>
     request<HistoryDetailResponse>(`/history/${analysisId}`),
+  getHistory: (limit = 10) => request<HistoryListResponse>(`/history?limit=${limit}`),
 };
