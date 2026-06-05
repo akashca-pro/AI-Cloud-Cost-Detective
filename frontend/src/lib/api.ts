@@ -1,10 +1,25 @@
 import { clearToken, getToken } from "./auth";
+import type {
+  AnalyzeRequest,
+  AnalyzeResponse,
+  HistoryDetailResponse,
+  RegionsResponse,
+} from "../types/analysis";
 
 const API_BASE = "/api";
 
 export interface ApiError {
   status: number;
   message: string;
+}
+
+export interface AuthResponse {
+  token: string;
+}
+
+export interface Credentials {
+  email: string;
+  password: string;
 }
 
 async function request<T>(path: string, options: RequestInit = {}): Promise<T> {
@@ -45,14 +60,6 @@ async function extractError(response: Response): Promise<string> {
   }
 }
 
-export interface AuthResponse {
-  token: string;
-}
-
-export interface Credentials {
-  email: string;
-  password: string;
-}
 
 export const api = {
   signup: (body: Credentials) =>
@@ -65,4 +72,12 @@ export const api = {
       method: "POST",
       body: JSON.stringify(body),
     }),
+  getRegions: () => request<RegionsResponse>("/aws/regions"),
+  analyze: (body: AnalyzeRequest) =>
+    request<AnalyzeResponse>("/analyze", {
+      method: "POST",
+      body: JSON.stringify(body),
+    }),
+  getHistoryDetail: (analysisId: string) =>
+    request<HistoryDetailResponse>(`/history/${analysisId}`),
 };
