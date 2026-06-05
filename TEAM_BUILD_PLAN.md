@@ -84,8 +84,8 @@ WP1 → WP2 → WP3 → WP4 → WP5 → WP6 → WP7 → develop → main
 | WP1 | AWS discovery + rules | `Merged` | akash-ca | devanarayan | `feature/wp1-resource-discovery` | [#3](https://github.com/akashca-pro/AI-Cloud-Cost-Detective/pull/3) | 2026-06-03 | 2026-06-03 | Approved | boto3 discovery + FinOps rules merged to develop |
 | WP2 | OpenAI enrichment | `Merged` | devanarayan | akash-ca | `feature/wp2-ai-enrichment` | [#5](https://github.com/akashca-pro/AI-Cloud-Cost-Detective/pull/5) | 2026-06-04 | 2026-06-04 | Approved | OpenAI enrichment merged to develop; tested by akash-ca |
 | WP3 | Database + history | `Merged` | akash-ca | devanarayan | `feature/wp3-database-history` | [#6](https://github.com/akashca-pro/AI-Cloud-Cost-Detective/pull/6) | 2026-06-04 | 2026-06-04 | Approved | PostgreSQL + history API merged to develop |
-| WP4 | Auth full stack | `In Review` | devanarayan (FE) / akash-ca (BE) | each other | `feature/wp4-auth-fullstack` | [#7](https://github.com/akashca-pro/AI-Cloud-Cost-Detective/pull/7) | 2026-06-04 | — | Approved (devanarayan) | FE+BE on branch; E2E tested; PR #7 open → develop |
-| WP5 | Frontend pages | `Not Started` | devanarayan (History/Nav) / akash-ca (Dashboard/Report) | each other | `feature/wp5-frontend-pages` | — | — | — | — | Blocked until WP4 merged |
+| WP4 | Auth full stack | `Merged` | devanarayan (FE) / akash-ca (BE) | each other | `feature/wp4-auth-fullstack` | [#7](https://github.com/akashca-pro/AI-Cloud-Cost-Detective/pull/7) | 2026-06-04 | 2026-06-04 | Approved | JWT auth full stack merged to develop via PR #7 |
+| WP5 | Frontend pages | `Not Started` | devanarayan (History/Nav) / akash-ca (Dashboard/Report) | each other | `feature/wp5-frontend-pages` | — | — | — | — | Ready — branch from develop |
 | WP6 | WebSocket progress | `Not Started` | devanarayan (BE WS) / akash-ca (ProgressTracker) | each other | `feature/wp6-websocket-progress` | — | — | — | — | Blocked until WP5 merged |
 | WP7 | E2E integration | `Not Started` | Both | each other | `feature/wp7-integration-e2e` | — | — | — | — | Blocked until WP6 merged |
 
@@ -387,3 +387,4 @@ Branch from develop for code. Update TEAM_BUILD_PLAN.md progress tracker on the 
 | 2026-06-04 | devanarayan | WP4 in progress — React auth frontend on feature/wp4-auth-fullstack |
 | 2026-06-04 | akash-ca | WP4 → In Review — backend JWT auth pushed; FE+BE E2E tested on feature/wp4-auth-fullstack |
 | 2026-06-04 | akash-ca | WP4 PR #7 opened → develop; devanarayan approved after local E2E test |
+| 2026-06-04 | akash-ca | WP4 merged to develop via PR #7; WP5 unblocked |
