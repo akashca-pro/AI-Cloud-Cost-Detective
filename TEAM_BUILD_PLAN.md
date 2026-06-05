@@ -264,8 +264,8 @@ Core UI pages wired to mock or real API.
 ### Deliverables
 
 **akash-ca**
-- [ ] `Dashboard.tsx` — region/service/tag picker, Run Analysis button
-- [ ] `Report.tsx` — findings, severity badges, copyable fix commands
+- [x] `Dashboard.tsx` — region/service/tag picker, Run Analysis button
+- [x] `Report.tsx` — findings, severity badges, copyable fix commands
 
 **devanarayan**
 - [ ] `History.tsx` — past analyses list
@@ -388,3 +388,4 @@ Branch from develop for code. Update TEAM_BUILD_PLAN.md progress tracker on the 
 | 2026-06-04 | akash-ca | WP4 → In Review — backend JWT auth pushed; FE+BE E2E tested on feature/wp4-auth-fullstack |
 | 2026-06-04 | akash-ca | WP4 PR #7 opened → develop; devanarayan approved after local E2E test |
 | 2026-06-04 | akash-ca | WP4 merged to develop via PR #7; WP5 unblocked |
+| 2026-06-04 | akash-ca | WP5 in progress — Dashboard + Report on feature/wp5-frontend-pages |
