@@ -86,8 +86,8 @@ WP1 → WP2 → WP3 → WP4 → WP5 → WP6 → WP7 → develop → main
 | WP3 | Database + history | `Merged` | akash-ca | devanarayan | `feature/wp3-database-history` | [#6](https://github.com/akashca-pro/AI-Cloud-Cost-Detective/pull/6) | 2026-06-04 | 2026-06-04 | Approved | PostgreSQL + history API merged to develop |
 | WP4 | Auth full stack | `Merged` | devanarayan (FE) / akash-ca (BE) | each other | `feature/wp4-auth-fullstack` | [#7](https://github.com/akashca-pro/AI-Cloud-Cost-Detective/pull/7) | 2026-06-04 | 2026-06-04 | Approved | JWT auth full stack merged to develop via PR #7 |
 | WP5 | Frontend pages | `Merged` | devanarayan (History/Nav) / akash-ca (Dashboard/Report) | each other | `feature/wp5-frontend-pages` | [#8](https://github.com/akashca-pro/AI-Cloud-Cost-Detective/pull/8) | 2026-06-04 | 2026-06-04 | Approved | Dashboard, Report, History, Navbar merged to develop via PR #8 |
-| WP6 | WebSocket progress | `In Review` | devanarayan (BE WS) / akash-ca (ProgressTracker) | each other | `feature/wp6-websocket-progress` | [#9](https://github.com/akashca-pro/AI-Cloud-Cost-Detective/pull/9) | 2026-06-04 | — | — | FE+BE complete on branch; live progress tested locally; PR #9 open → develop |
-| WP7 | E2E integration | `Not Started` | Both | each other | `feature/wp7-integration-e2e` | — | — | — | — | Blocked until WP6 merged |
+| WP6 | WebSocket progress | `Merged` | devanarayan (BE WS) / akash-ca (ProgressTracker) | each other | `feature/wp6-websocket-progress` | [#9](https://github.com/akashca-pro/AI-Cloud-Cost-Detective/pull/9) | 2026-06-04 | 2026-06-04 | Approved | WebSocket progress merged to develop via PR #9 |
+| WP7 | E2E integration | `In Progress` | Both | each other | `feature/wp7-integration-e2e` | — | 2026-06-04 | — | — | akash-ca: JWT guards + E2E checklist pushed; devanarayan: verify FE auth wiring |
 
 **Status values:** `Not Started` · `In Progress` · `In Review` · `Changes Requested` · `Merged`
 
@@ -321,8 +321,8 @@ Full app flow works end to end.
 ### Deliverables
 
 **akash-ca**
-- [ ] JWT middleware on protected routes: `/api/analyze`, `/api/history`, `/api/aws/regions`
-- [ ] Backend E2E test checklist
+- [x] JWT middleware on protected routes: `/api/analyze`, `/api/history`, `/api/aws/regions`
+- [x] Backend E2E test checklist
 
 **devanarayan**
 - [ ] Central API client with auth headers
@@ -392,3 +392,5 @@ Branch from develop for code. Update TEAM_BUILD_PLAN.md progress tracker on the 
 | 2026-06-04 | akash-ca | WP5 → In Review — PR #8 opened (Dashboard, Report, history timestamps); tested locally |
 | 2026-06-04 | akash-ca | WP5 merged to develop via PR #8; WP6 unblocked |
 | 2026-06-04 | akash-ca | WP6 → In Review — PR #9 opened (WebSocket progress + ProgressTracker); tested locally |
+| 2026-06-04 | akash-ca | WP6 merged to develop via PR #9; WP7 unblocked |
+| 2026-06-04 | akash-ca | WP7 in progress — JWT guards on protected routes + backend/E2E_CHECKLIST.md on feature/wp7-integration-e2e |
