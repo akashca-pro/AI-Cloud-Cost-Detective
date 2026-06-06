@@ -4,13 +4,14 @@ from __future__ import annotations
 
 import asyncio
 import logging
+import uuid
 from contextlib import asynccontextmanager
 
 from dotenv import load_dotenv
 
 load_dotenv()
 
-from fastapi import FastAPI, HTTPException, Query
+from fastapi import FastAPI, HTTPException, Query, WebSocket
 from fastapi.middleware.cors import CORSMiddleware
 
 import db
@@ -27,6 +28,7 @@ from models.auth import AuthRequest, AuthResponse
 from models.history import AnalysisHistoryDetail, AnalysisHistoryItem, HistoryDetailResponse, HistoryListResponse
 from models.requests import AnalyzeRequest
 from models.responses import AnalyzeResponse
+from progress_hub import ProgressReporter, progress_hub
 from services.aws_discovery_service import AWSDiscoveryService
 
 logger = logging.getLogger(__name__)
@@ -157,11 +159,21 @@ async def list_enabled_regions() -> dict:
     }
 
 
+@app.websocket("/ws/progress/{analysis_id}")
+async def ws_progress(websocket: WebSocket, analysis_id: str) -> None:
+    """Stream live progress for a running or completed analysis."""
+    await progress_hub.listen(analysis_id, websocket)
+
+
 @app.post("/api/analyze", response_model=AnalyzeResponse)
 async def analyze(request: AnalyzeRequest) -> AnalyzeResponse:
     """
     Discover AWS resources by region, service, and tags; run deterministic FinOps checks;
     enrich with OpenAI; persist to PostgreSQL when DATABASE_URL is set.
+
+    Connect to ``ws://localhost:8000/ws/progress/{analysis_id}`` before or during this
+    request. Pass the same ``analysis_id`` in the request body (or omit it to let the
+    server generate one).
     """
     if not request.services:
         raise HTTPException(
@@ -169,32 +181,48 @@ async def analyze(request: AnalyzeRequest) -> AnalyzeResponse:
             detail={"detail": "At least one service is required.", "code": "invalid_request"},
         )
 
+    analysis_id = request.analysis_id or str(uuid.uuid4())
+    reporter = ProgressReporter(progress_hub, analysis_id)
+
     service = AWSDiscoveryService()
     try:
-        response = await service.analyze(request)
+        response = await service.analyze(request, reporter=reporter)
     except AWSCredentialsError as exc:
+        await reporter.emit("error", exc.message, status="error")
         raise _http_error(exc) from exc
     except AWSAccessDeniedError as exc:
+        await reporter.emit("error", exc.message, status="error")
         raise _http_error(exc) from exc
     except AWSRegionError as exc:
+        await reporter.emit("error", exc.message, status="error")
         raise _http_error(exc) from exc
     except AWSDiscoveryError as exc:
+        await reporter.emit("error", exc.message, status="error")
         raise _http_error(exc) from exc
+    except Exception as exc:
+        await reporter.emit("error", str(exc), status="error")
+        raise
+
+    response.analysis_id = analysis_id
 
     if db.is_configured():
         try:
+            await reporter.emit("storing", "Storing results...")
             # user_id wired in WP4 after JWT auth
-            analysis_id = await asyncio.to_thread(
+            await asyncio.to_thread(
                 db.save_analysis,
                 None,
                 request,
                 response,
+                "completed",
+                analysis_id,
             )
-            response.analysis_id = analysis_id
         except DatabaseError as exc:
             logger.error("Failed to persist analysis: %s", exc.message)
+            await reporter.emit("error", exc.message, status="error")
             raise _db_http_error(exc) from exc
 
+    await reporter.emit("complete", "Analysis complete", status="complete")
     return response
 
 

@@ -10,6 +10,13 @@ DEFAULT_SERVICES: list[ServiceName] = ["ec2", "rds", "s3", "elb", "ebs"]
 class AnalyzeRequest(BaseModel):
     """AWS-native discovery scope: regions, services, and tag-based workload filters."""
 
+    analysis_id: str | None = Field(
+        default=None,
+        description=(
+            "Optional client-generated UUID. Use the same id when connecting to "
+            "ws://localhost:8000/ws/progress/{analysis_id} for live progress."
+        ),
+    )
     regions: list[str] | None = Field(
         default=None,
         description="AWS regions to scan. If omitted, all enabled regions are discovered dynamically.",

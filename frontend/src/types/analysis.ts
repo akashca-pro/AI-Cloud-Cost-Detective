@@ -4,9 +4,18 @@ export type ServiceName = "ec2" | "rds" | "s3" | "elb" | "ebs";
 export const ALL_SERVICES: ServiceName[] = ["ec2", "rds", "s3", "elb", "ebs"];
 
 export interface AnalyzeRequest {
+  /** Client UUID — connect to ws://localhost:8000/ws/progress/{analysis_id} for live progress. */
+  analysis_id?: string | null;
   regions?: string[] | null;
   services: ServiceName[];
   tags: Record<string, string>;
+}
+
+export interface ProgressEvent {
+  analysis_id: string;
+  step: "fetching" | "scanning" | "ai" | "storing" | "complete" | "error";
+  status: "in_progress" | "complete" | "error";
+  message: string;
 }
 
 export interface Finding {
