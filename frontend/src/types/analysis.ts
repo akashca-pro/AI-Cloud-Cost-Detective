@@ -11,6 +11,8 @@ export interface AnalyzeRequest {
   tags: Record<string, string>;
 }
 
+export type ProgressStep = ProgressEvent["step"];
+
 export interface ProgressEvent {
   analysis_id: string;
   step: "fetching" | "scanning" | "ai" | "storing" | "complete" | "error";

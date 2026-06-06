@@ -1,8 +1,15 @@
 import { FormEvent, useEffect, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
+import ProgressTracker from "../components/ProgressTracker";
 import { api, type ApiError } from "../lib/api";
 import { formatAnalysisTimestamp } from "../lib/format";
-import { ALL_SERVICES, type AnalysisHistoryItem, type ServiceName } from "../types/analysis";
+import { openProgressSocket, upsertProgressEvent } from "../lib/progress";
+import {
+  ALL_SERVICES,
+  type AnalysisHistoryItem,
+  type ProgressEvent,
+  type ServiceName,
+} from "../types/analysis";
 
 const SERVICE_LABELS: Record<ServiceName, string> = {
   ec2: "EC2",
@@ -28,6 +35,7 @@ export default function Dashboard() {
 
   const [running, setRunning] = useState(false);
   const [runError, setRunError] = useState<string | null>(null);
+  const [progressEvents, setProgressEvents] = useState<ProgressEvent[]>([]);
 
   const [recentAnalyses, setRecentAnalyses] = useState<AnalysisHistoryItem[]>([]);
   const [loadingHistory, setLoadingHistory] = useState(true);
@@ -135,8 +143,18 @@ export default function Dashboard() {
 
     setRunning(true);
     setRunError(null);
+    setProgressEvents([]);
+
+    const analysisId = crypto.randomUUID();
+    let socket: WebSocket | null = null;
+
     try {
+      socket = await openProgressSocket(analysisId, (event) => {
+        setProgressEvents((prev) => upsertProgressEvent(prev, event));
+      });
+
       const result = await api.analyze({
+        analysis_id: analysisId,
         regions: allRegions ? null : selectedRegions,
         services: selectedServices,
         tags,
@@ -154,6 +172,7 @@ export default function Dashboard() {
           : "Analysis failed. Please try again.";
       setRunError(message);
     } finally {
+      socket?.close();
       setRunning(false);
     }
   }
@@ -296,6 +315,8 @@ export default function Dashboard() {
       >
         {running ? "Running analysis…" : "Run analysis"}
       </button>
+
+      <ProgressTracker events={progressEvents} running={running} />
 
       <section className="mt-12 rounded-2xl border border-slate-800 bg-slate-900/50 p-6">
         <h2 className="mb-1 text-lg font-medium text-slate-200">Past analyses</h2>
