@@ -31,6 +31,14 @@ class AuthError(Exception):
         self.status_code = status_code
 
 
+class AuthTokenError(Exception):
+    def __init__(self, message: str, code: str, status_code: int = 401) -> None:
+        super().__init__(message)
+        self.message = message
+        self.code = code
+        self.status_code = status_code
+
+
 def _jwt_secret() -> str:
     secret = os.getenv(JWT_SECRET_ENV, "").strip()
     if not secret:
@@ -70,6 +78,25 @@ def create_access_token(user_id: str, email: str) -> str:
         "exp": now + timedelta(days=TOKEN_EXPIRE_DAYS),
     }
     return jwt.encode(payload, _jwt_secret(), algorithm=JWT_ALGORITHM)
+
+
+def decode_access_token(token: str) -> dict:
+    """Validate JWT and return payload (WP7)."""
+    try:
+        return jwt.decode(token, _jwt_secret(), algorithms=[JWT_ALGORITHM])
+    except jwt.ExpiredSignatureError as exc:
+        raise AuthTokenError("Token has expired.", "token_expired", 401) from exc
+    except jwt.InvalidTokenError as exc:
+        raise AuthTokenError("Invalid or missing token.", "invalid_token", 401) from exc
+
+
+def get_user_id_from_token(token: str) -> str:
+    """Extract user UUID from Bearer token."""
+    payload = decode_access_token(token)
+    user_id = payload.get("sub")
+    if not user_id:
+        raise AuthTokenError("Invalid token payload.", "invalid_token", 401)
+    return str(user_id)
 
 
 def signup(email: str, password: str) -> str:

@@ -11,7 +11,9 @@ from dotenv import load_dotenv
 
 load_dotenv()
 
-from fastapi import FastAPI, HTTPException, Query, WebSocket
+from typing import Annotated
+
+from fastapi import Depends, FastAPI, Header, HTTPException, Query, WebSocket
 from fastapi.middleware.cors import CORSMiddleware
 
 import db
@@ -23,7 +25,7 @@ from core.exceptions import (
 )
 from db import DatabaseError
 import auth_service
-from auth_service import AuthConfigError, AuthError
+from auth_service import AuthConfigError, AuthError, AuthTokenError
 from models.auth import AuthRequest, AuthResponse
 from models.history import AnalysisHistoryDetail, AnalysisHistoryItem, HistoryDetailResponse, HistoryListResponse
 from models.requests import AnalyzeRequest
@@ -44,7 +46,7 @@ async def lifespan(_app: FastAPI):
 app = FastAPI(
     title="AI Cloud Cost Detective",
     description="AWS-native infrastructure discovery, FinOps detection, and analysis history",
-    version="0.5.0",
+    version="0.7.0",
     lifespan=lifespan,
 )
 
@@ -96,6 +98,41 @@ def _auth_http_error(exc: AuthError) -> HTTPException:
     )
 
 
+def _token_http_error(exc: AuthTokenError) -> HTTPException:
+    return HTTPException(
+        status_code=exc.status_code,
+        detail={"detail": exc.message, "code": exc.code},
+    )
+
+
+async def require_current_user_id(
+    authorization: Annotated[str | None, Header()] = None,
+) -> str:
+    """JWT guard for protected API routes (WP7)."""
+    if not authorization or not authorization.startswith("Bearer "):
+        raise HTTPException(
+            status_code=401,
+            detail={"detail": "Authentication required.", "code": "unauthorized"},
+        )
+
+    token = authorization.removeprefix("Bearer ").strip()
+    if not token:
+        raise HTTPException(
+            status_code=401,
+            detail={"detail": "Authentication required.", "code": "unauthorized"},
+        )
+
+    try:
+        return auth_service.get_user_id_from_token(token)
+    except AuthConfigError as exc:
+        raise HTTPException(
+            status_code=503,
+            detail={"detail": exc.message, "code": exc.code},
+        ) from exc
+    except AuthTokenError as exc:
+        raise _token_http_error(exc) from exc
+
+
 @app.post("/api/auth/signup", response_model=AuthResponse)
 async def auth_signup(body: AuthRequest) -> AuthResponse:
     """Register a user (bcrypt password hash) and return a JWT."""
@@ -142,7 +179,9 @@ def health() -> dict[str, str | bool]:
 
 
 @app.get("/api/aws/regions")
-async def list_enabled_regions() -> dict:
+async def list_enabled_regions(
+    _user_id: Annotated[str, Depends(require_current_user_id)],
+) -> dict:
     """Dynamically list enabled AWS regions for the configured account."""
     service = AWSDiscoveryService()
     try:
@@ -166,7 +205,10 @@ async def ws_progress(websocket: WebSocket, analysis_id: str) -> None:
 
 
 @app.post("/api/analyze", response_model=AnalyzeResponse)
-async def analyze(request: AnalyzeRequest) -> AnalyzeResponse:
+async def analyze(
+    request: AnalyzeRequest,
+    user_id: Annotated[str, Depends(require_current_user_id)],
+) -> AnalyzeResponse:
     """
     Discover AWS resources by region, service, and tags; run deterministic FinOps checks;
     enrich with OpenAI; persist to PostgreSQL when DATABASE_URL is set.
@@ -211,7 +253,7 @@ async def analyze(request: AnalyzeRequest) -> AnalyzeResponse:
             # user_id wired in WP4 after JWT auth
             await asyncio.to_thread(
                 db.save_analysis,
-                None,
+                user_id,
                 request,
                 response,
                 "completed",
@@ -228,13 +270,10 @@ async def analyze(request: AnalyzeRequest) -> AnalyzeResponse:
 
 @app.get("/api/history", response_model=HistoryListResponse)
 async def get_history(
+    user_id: Annotated[str, Depends(require_current_user_id)],
     limit: int = Query(default=50, ge=1, le=100),
-    user_id: str | None = Query(
-        default=None,
-        description="Filter by user (JWT auth in WP4). Omit for pre-auth shared history.",
-    ),
 ) -> HistoryListResponse:
-    """List past analyses (summary rows). Full report via GET /api/history/{analysis_id}."""
+    """List past analyses for the authenticated user."""
     _require_db()
     try:
         rows = await asyncio.to_thread(db.list_analyses, user_id, limit)
@@ -250,9 +289,9 @@ async def get_history(
 @app.get("/api/history/{analysis_id}", response_model=HistoryDetailResponse)
 async def get_history_detail(
     analysis_id: str,
-    user_id: str | None = Query(default=None),
+    user_id: Annotated[str, Depends(require_current_user_id)],
 ) -> HistoryDetailResponse:
-    """Return one stored analysis including full analysis_result for the report page."""
+    """Return one stored analysis for the authenticated user."""
     _require_db()
     try:
         row = await asyncio.to_thread(db.get_analysis, analysis_id, user_id)
