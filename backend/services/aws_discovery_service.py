@@ -15,6 +15,7 @@ from detection.finops_detectors import FinOpsDetector
 from models.requests import AnalyzeRequest
 from models.resources import NormalizedResource
 from models.responses import AnalyzeResponse, WorkloadSummary
+from progress_hub import ProgressReporter
 from scanners import SCANNER_REGISTRY
 from scanners.base import BaseScanner
 
@@ -67,10 +68,26 @@ class AWSDiscoveryService:
 
         return enabled
 
-    async def analyze(self, request: AnalyzeRequest) -> AnalyzeResponse:
-        regions = self.discover_enabled_regions(request.regions)
+    async def analyze(
+        self,
+        request: AnalyzeRequest,
+        reporter: ProgressReporter | None = None,
+    ) -> AnalyzeResponse:
         services = list(dict.fromkeys(request.services))  # preserve order, dedupe
         tag_filter = request.tags
+
+        if reporter:
+            await reporter.emit("fetching", "Fetching AWS regions...")
+
+        regions = self.discover_enabled_regions(request.regions)
+
+        if reporter:
+            service_labels = ", ".join(s.upper() for s in services)
+            region_count = len(regions)
+            await reporter.emit(
+                "scanning",
+                f"Scanning {service_labels} across {region_count} region(s)...",
+            )
 
         resources = await self._scan_all(services, regions, tag_filter)
         workloads = self._aggregate_workloads(resources, tag_filter)
@@ -88,6 +105,9 @@ class AWSDiscoveryService:
             findings=findings,
             findings_summary=self.detector.summarize(findings),
         )
+
+        if reporter:
+            await reporter.emit("ai", "Analyzing costs with AI...")
 
         ai_enrichment = await asyncio.to_thread(AIAnalyzer().enrich, response)
         response.ai_enrichment = ai_enrichment

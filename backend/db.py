@@ -143,13 +143,14 @@ def save_analysis(
     request: AnalyzeRequest,
     response: AnalyzeResponse,
     status: str = "completed",
+    analysis_id: str | None = None,
 ) -> str:
     """
     Persist a completed analyze run. Returns the new analysis UUID.
 
     ``analysis_result`` stores the full ``AnalyzeResponse`` JSON for report/history views.
     """
-    analysis_id = str(uuid.uuid4())
+    analysis_id = analysis_id or str(uuid.uuid4())
     payload = response.model_dump(mode="json")
     scan_scope = _build_scan_scope(request, response)
 
